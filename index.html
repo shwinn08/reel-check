@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Reel Check</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Rubik:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: one phone screen. Alert banner, the bicep on stage, a supplement-facts label, two big thumbs-reach buttons. */
+:root {
+  --bg: #E3EBF1;
+  --panel: #FFFFFF;
+  --ink: #17202B;
+  --muted: #586577;
+  --rule: #17202B;
+  --alarm: #E0464B;
+  --alarm-ink: #FFFFFF;
+  --ok: #1E8752;
+  --ok-ink: #FFFFFF;
+  --skin: #F2B38B;
+  --skin-shade: #E39A70;
+  --outline: #17202B;
+  --shirt: #55703A;
+  --sweat: #7FC2EE;
+  --spark: #F2AE00;
+  --bubble: #FFFFFF;
+  --font-display: "Bowlby One", "Arial Black", Impact, sans-serif;
+  --font-body: "Rubik", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F141B; --panel: #19212B; --ink: #EDF1F6; --muted: #98A4B4; --rule: #EDF1F6;
+    --alarm: #F0555A; --ok: #36B474; --bubble: #222B37; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F141B; --panel: #19212B; --ink: #EDF1F6; --muted: #98A4B4; --rule: #EDF1F6;
+  --alarm: #F0555A; --ok: #36B474; --bubble: #222B37; color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.4;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px;
+  box-sizing: border-box;
+}
+.app {
+  max-width: 420px;
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Top bar */
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.wordmark { font-family: var(--font-display); font-size: 22px; letter-spacing: 0.01em; line-height: 1; }
+.clock { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 500; }
+
+/* Alert banner */
+.banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--alarm); color: var(--alarm-ink);
+  border-radius: 12px; padding: 10px 14px;
+  font-family: var(--font-display); font-size: 17px; letter-spacing: 0.02em; text-transform: uppercase;
+  line-height: 1.15;
+  transition: background-color .35s ease;
+}
+.banner .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex: none; animation: blink 1s steps(2, start) infinite; }
+.is-done .banner { background: var(--ok); color: var(--ok-ink); }
+.is-done .banner .dot { animation: none; }
+@keyframes blink { to { visibility: hidden; } }
+
+/* Stage */
+.stage { position: relative; display: grid; place-items: center; }
+.bubble {
+  position: relative; justify-self: start;
+  background: var(--bubble); color: var(--ink);
+  border: 2.5px solid var(--outline);
+  border-radius: 18px; padding: 8px 14px;
+  font-weight: 700; font-size: 16px; max-width: 80%;
+  box-shadow: 3px 3px 0 var(--outline);
+}
+:root[data-theme="dark"] .bubble { border-color: var(--rule); box-shadow: 3px 3px 0 var(--rule); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bubble { border-color: var(--rule); box-shadow: 3px 3px 0 var(--rule); } }
+.bubble::after {
+  content: ""; position: absolute; left: 34px; bottom: -11px; width: 16px; height: 16px;
+  background: var(--bubble); border-right: 2.5px solid; border-bottom: 2.5px solid; border-color: inherit;
+  transform: rotate(45deg) skew(8deg, 8deg);
+}
+svg.arm { width: 100%; max-width: 360px; height: auto; display: block; overflow: visible; }
+.wobble { transform-box: view-box; transform-origin: 150px 170px; animation: wobble 2.4s ease-in-out infinite; }
+.is-done .wobble { animation: none; }
+@keyframes wobble { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-1.6deg) translateY(2px); } }
+.bulge, .face { transform-box: view-box; transform-origin: 100px 160px; transition: transform .6s cubic-bezier(.3,1.6,.5,1); }
+.fore { transform-box: view-box; transform-origin: 172px 150px; transition: transform .7s cubic-bezier(.3,1.5,.5,1); }
+.layer-outline { fill: var(--skin); stroke: var(--outline); stroke-width: 10; stroke-linejoin: round; }
+.layer-fill { fill: var(--skin); }
+.sleeve { fill: var(--shirt); stroke: var(--outline); stroke-width: 5; }
+.face path { fill: none; stroke: var(--outline); stroke-width: 4.5; stroke-linecap: round; }
+.face circle { fill: var(--outline); }
+.cheek { fill: var(--skin-shade); opacity: .7; }
+.sweat { fill: var(--sweat); stroke: var(--outline); stroke-width: 3; transition: opacity .3s; }
+.spark { fill: var(--spark); stroke: var(--outline); stroke-width: 2.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.is-done .spark { opacity: 1; animation: twinkle 1.4s ease-in-out infinite; }
+.is-done .spark:nth-of-type(2) { animation-delay: .3s; }
+.is-done .spark:nth-of-type(3) { animation-delay: .6s; }
+.is-done .sweat { opacity: 0; }
+@keyframes twinkle { 0%,100% { transform: scale(1) rotate(0); } 50% { transform: scale(.6) rotate(25deg); } }
+.pop { animation: pop .55s cubic-bezier(.3,1.6,.5,1); }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* Reel Facts label (styled after a supplement-facts panel) */
+.facts {
+  background: var(--panel); color: var(--ink);
+  border: 2px solid var(--rule); padding: 8px 12px 10px;
+}
+.facts h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.05; }
+.facts .serving { font-size: 13px; padding-bottom: 6px; border-bottom: 8px solid var(--rule); }
+.row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+.row:last-of-type { border-bottom: 4px solid var(--rule); }
+.row b { font-weight: 800; }
+.row .val { font-weight: 800; }
+.row .val.bad { color: var(--alarm); }
+.row .val.good { color: var(--ok); }
+.facts .foot { font-size: 12.5px; color: var(--muted); padding-top: 6px; }
+
+/* Actions */
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+.btn {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 56px; border-radius: 14px; padding: 8px 12px;
+  font-family: var(--font-display); font-size: 18px; letter-spacing: 0.02em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; border: 2.5px solid var(--outline);
+  box-shadow: 0 4px 0 var(--outline);
+  transition: transform .08s ease, box-shadow .08s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.btn:focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; }
+.btn-took { background: var(--ok); color: var(--ok-ink); }
+.btn-notyet { background: var(--panel); color: var(--ink); }
+.btn-wide { grid-column: 1 / -1; }
+.hint { grid-column: 1 / -1; margin: 0; text-align: center; color: var(--muted); font-size: 13px; }
+
+/* Demo controls */
+.demo { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; font-size: 12.5px; color: var(--muted); padding-bottom: 4px; }
+.demo button { background: none; border: none; padding: 4px 2px; font: inherit; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.demo button:focus-visible { outline: 2px solid var(--spark); border-radius: 4px; }
+
+@media (max-height: 640px) { svg.arm { max-width: 270px; } .facts h2 { font-size: 22px; } }
+@media (prefers-reduced-motion: reduce) {
+  .wobble, .banner .dot, .is-done .spark, .pop { animation: none !important; }
+  .bulge, .face, .fore { transition: none; }
+}
+</style>
+
+<main class="app" id="app">
+  <header class="top">
+    <div class="wordmark">REEL CHECK</div>
+    <div class="clock" id="clock">--:--</div>
+  </header>
+
+  <div class="banner" id="banner" role="status"><span class="dot" aria-hidden="true"></span><span id="bannerText">Creatine not detected</span></div>
+
+  <section class="stage" aria-label="Your bicep">
+    <div class="bubble" id="bubble">bro... I'm literally shrinking.</div>
+    <svg class="arm" id="armSvg" viewBox="0 0 330 215" role="img" aria-labelledby="armTitle">
+      <title id="armTitle">A cartoon bicep with a face</title>
+      <g class="wobble">
+        <!-- outline layer -->
+        <g class="layer-outline">
+          <g class="bulge"><ellipse cx="100" cy="128" rx="52" ry="38"/></g>
+          <g class="fore"><rect x="150" y="34" width="44" height="130" rx="22"/><circle cx="172" cy="36" r="29"/></g>
+          <rect x="30" y="128" width="164" height="44" rx="22"/>
+        </g>
+        <!-- fill layer hides inner outlines so the arm reads as one shape -->
+        <g class="layer-fill">
+          <g class="bulge"><ellipse cx="100" cy="128" rx="52" ry="38"/></g>
+          <g class="fore"><rect x="150" y="34" width="44" height="130" rx="22"/><circle cx="172" cy="36" r="29"/></g>
+          <rect x="30" y="128" width="164" height="44" rx="22"/>
+        </g>
+        <path class="fore" d="M160 22 q12 -8 24 0" fill="none" stroke="var(--outline)" stroke-width="4" stroke-linecap="round"/>
+        <rect class="sleeve" x="4" y="112" width="48" height="76" rx="12"/>
+        <g class="face">
+          <ellipse class="cheek" cx="76" cy="132" rx="7" ry="4.5"/>
+          <ellipse class="cheek" cx="124" cy="132" rx="7" ry="4.5"/>
+          <circle cx="87" cy="120" r="5"/>
+          <circle cx="113" cy="120" r="5"/>
+          <path id="browL" d="M78 108 L92 103"/>
+          <path id="browR" d="M108 103 L122 108"/>
+          <path id="mouth" d="M90 141 Q100 133 110 141"/>
+        </g>
+        <path class="sweat" d="M146 92 q-7 11 0 15 q7 -4 0 -15 z"/>
+      </g>
+      <path class="spark" d="M58 46 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 z"/>
+      <path class="spark" d="M250 30 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 z"/>
+      <path class="spark" d="M262 112 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 z"/>
+    </svg>
+  </section>
+
+  <section class="facts" aria-label="Reel Facts">
+    <h2>Reel Facts</h2>
+    <div class="serving">Serving size 1 scoop (5 g) · Servings left today 1</div>
+    <div class="row"><b>Instagram opens today</b><span class="val" id="opens">1</span></div>
+    <div class="row"><b>Creatine today</b><span class="val bad" id="dose">0 g</span></div>
+    <div class="row"><span>Bicep confidence</span><span class="val" id="conf">100%</span></div>
+    <div class="foot" id="foot">You're watching other people's gains.</div>
+  </section>
+
+  <div class="actions" id="actions">
+    <button class="btn btn-took" id="took" type="button">Took it</button>
+    <a class="btn btn-notyet" id="notyet" href="instagram://" target="_top">Not yet</a>
+    <p class="hint" id="hint">Not yet sends you back to the feed. He'll be smaller next time.</p>
+  </div>
+
+  <div class="actions" id="doneActions" hidden>
+    <a class="btn btn-notyet btn-wide" id="back" href="instagram://" target="_top">Back to the feed</a>
+    <p class="hint">Logged for today. He'll leave you alone until tomorrow.</p>
+  </div>
+
+  <nav class="demo" aria-label="Demo controls">
+    <span>Demo:</span>
+    <button type="button" id="simOpen">Simulate another open</button>
+    <button type="button" id="reset">Reset today</button>
+  </nav>
+</main>
+
+<script>
+(function () {
+  var KEY = 'reelcheck.v1';
+  var LINES = [
+    "bro... I'm literally shrinking.",
+    "you opened Instagram again. I noticed.",
+    "watching other people's gains again?",
+    "I can't feel my fist.",
+    "I am soup now.",
+    "this is my villain origin story."
+  ];
+
+  function dayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  function fresh() { return { day: dayKey(), opens: 0, taken: false }; }
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY));
+      if (s && s.day === dayKey()) return s;
+    } catch (e) {}
+    return fresh();
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+  var st = load();
+  var alreadyTakenOnLoad = st.taken;
+  if (!st.taken) { st.opens += 1; save(); }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var app = $('app');
+
+  function setAll(sel, transform) {
+    var els = document.querySelectorAll(sel);
+    for (var i = 0; i < els.length; i++) els[i].style.transform = transform;
+  }
+
+  function tick() {
+    $('clock').textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function render(animate) {
+    var n = Math.max(1, st.opens);
+    $('opens').textContent = n;
+
+    if (st.taken) {
+      app.classList.add('is-done');
+      $('bannerText').textContent = 'Gains restored';
+      $('bubble').textContent = alreadyTakenOnLoad && !animate ? "We're good today. Go scroll." : 'Thank you. I feel huge.';
+      setAll('.bulge', 'scale(1.16)');
+      setAll('.face', 'scale(1.1)');
+      setAll('.fore', 'rotate(-10deg)');
+      $('browL').setAttribute('d', 'M78 103 L92 101');
+      $('browR').setAttribute('d', 'M108 101 L122 103');
+      $('mouth').setAttribute('d', 'M86 134 Q100 150 114 134');
+      $('dose').textContent = '5 g';
+      $('dose').className = 'val good';
+      $('conf').textContent = '100%';
+      $('foot').textContent = 'Took ' + (n === 1 ? '1 open' : n + ' opens') + ' to remember. Tomorrow, try 1.';
+      $('actions').hidden = true;
+      $('doneActions').hidden = false;
+      if (animate) {
+        var svg = $('armSvg');
+        svg.classList.remove('pop'); void svg.getBoundingClientRect(); svg.classList.add('pop');
+      }
+    } else {
+      app.classList.remove('is-done');
+      var s = Math.max(0.3, 1 - (n - 1) * 0.14);
+      var fs = Math.max(0.62, s);
+      var droop = Math.min(72, (n - 1) * 14);
+      $('bannerText').textContent = 'Creatine not detected';
+      $('bubble').textContent = LINES[Math.min(n - 1, LINES.length - 1)];
+      setAll('.bulge', 'scale(' + s + ')');
+      setAll('.face', 'scale(' + fs + ')');
+      setAll('.fore', 'rotate(' + droop + 'deg)');
+      $('browL').setAttribute('d', 'M78 108 L92 103');
+      $('browR').setAttribute('d', 'M108 103 L122 108');
+      $('mouth').setAttribute('d', n >= 4 ? 'M90 141 Q95 136 100 141 Q105 146 110 141' : 'M90 141 Q100 133 110 141');
+      $('dose').textContent = '0 g';
+      $('dose').className = 'val bad';
+      $('conf').textContent = Math.round(s * 100) + '%';
+      $('foot').textContent = "You're watching other people's gains.";
+      $('actions').hidden = false;
+      $('doneActions').hidden = true;
+    }
+  }
+
+  $('took').addEventListener('click', function () {
+    st.taken = true; save(); render(true);
+    try { $('back').focus({ preventScroll: true }); } catch (e) {}
+  });
+  $('simOpen').addEventListener('click', function () {
+    alreadyTakenOnLoad = false;
+    st.taken = false; st.opens += 1; save(); render(false);
+  });
+  $('reset').addEventListener('click', function () {
+    alreadyTakenOnLoad = false;
+    st = fresh(); st.opens = 1; save(); render(false);
+  });
+
+  tick(); setInterval(tick, 15000);
+  render(false);
+
+  // Hosted on its own and opened by the Shortcut (?from=shortcut): if creatine is
+  // already logged today, bounce straight back to Instagram.
+  try {
+    var standalone = window.top === window.self;
+    var fromShortcut = new URLSearchParams(location.search).get('from') === 'shortcut';
+    if (standalone && fromShortcut && alreadyTakenOnLoad) {
+      setTimeout(function () { location.href = 'instagram://'; }, 1200);
+    }
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>
